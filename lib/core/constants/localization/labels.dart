@@ -1,0 +1,13 @@
+Map<String, dynamic> translations = {
+  'appTitle': 'MINT AVIATION',
+  'instructor': 'Instructor',
+  'trainee': 'Trainee',
+  'observer': 'Observer',
+  'administration': 'Administration',
+  'certificates': 'Certificates',
+  'avsafety_seminar': 'AV Safety Seminar',
+  'flight_instruments': 'Flight Instruments',
+  'flight_simulator': 'Flight Simulator',
+  'event_data': 'Traffic Air Management Training',
+  'not_found': 'Page not found',
+};
