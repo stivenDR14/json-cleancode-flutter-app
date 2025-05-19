@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/di/locator.dart';
 import '../../../../core/constants/localization/localization_class.dart';
 import '../../../../core/constants/theme/app_colors.dart';
+import '../../../../core/widgets/loading_widget.dart';
 import '../../../content/presentation/pages/content.dart';
 import '../../domain/entities/slot_category.dart';
 import '../cubit/tabs_layout_cubit.dart';
@@ -77,11 +78,13 @@ class _TabsLayoutState extends State<TabsLayout> with TickerProviderStateMixin {
                 onPressed: () => _tabsLayoutCubit.handleBack(_tabController),
               ),
               bottom: TabBar(
+                isScrollable: true,
                 controller: _tabController,
                 dividerColor: AppColors.divider,
                 indicatorColor: AppColors.tabIndicator,
                 labelColor: AppColors.tabSelected,
                 unselectedLabelColor: AppColors.tabUnselected,
+                tabAlignment: TabAlignment.start,
                 tabs:
                     SlotCategory.values
                         .map(
@@ -94,14 +97,38 @@ class _TabsLayoutState extends State<TabsLayout> with TickerProviderStateMixin {
             body: TabBarView(
               controller: _tabController,
               physics: const NeverScrollableScrollPhysics(),
-              children: SlotCategory.values.map((group) => Content()).toList(),
+              children:
+                  SlotCategory.values
+                      .map(
+                        (group) => Content(
+                          eventName: state.slots.eventName,
+                          resources:
+                              state.slots.slotGroups
+                                      .where(
+                                        (slotGroup) =>
+                                            slotGroup.slotGroupName ==
+                                            group.name,
+                                      )
+                                      .isNotEmpty
+                                  ? state.slots.slotGroups
+                                      .where(
+                                        (slotGroup) =>
+                                            slotGroup.slotGroupName ==
+                                            group.name,
+                                      )
+                                      .first
+                                      .resources
+                                  : [],
+                        ),
+                      )
+                      .toList(),
             ),
           );
         }
         if (state is TabsLayoutError) {
           return Scaffold(body: Center(child: Text(state.message)));
         }
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        return const Scaffold(body: LoadingWidget());
       },
     );
   }

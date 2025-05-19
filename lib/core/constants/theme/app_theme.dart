@@ -98,7 +98,7 @@ class AppTheme {
   static TextStyle get eventLabelStyle => TextStyle(
     color: AppColors.eventLabel,
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
   );
 
   static TextStyle get resourceNameStyle => TextStyle(
@@ -119,13 +119,6 @@ class AppTheme {
     fontWeight: FontWeight.w400,
   );
 
-  static const double cardPadding = 16.0;
   static const double pagePadding = 16.0;
   static const double itemSpacing = 8.0;
-  static const double sectionSpacing = 24.0;
-  static const double cornerRadius = 8.0;
-
-  static const Duration quickAnimation = Duration(milliseconds: 200);
-  static const Duration normalAnimation = Duration(milliseconds: 300);
-  static const Duration slowAnimation = Duration(milliseconds: 500);
 }

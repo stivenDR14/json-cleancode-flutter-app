@@ -10,4 +10,8 @@ Map<String, dynamic> translations = {
   'flight_simulator': 'Flight Simulator',
   'event_data': 'Traffic Air Management Training',
   'not_found': 'Page not found',
+  'cancel': 'Cancel',
+  'search': 'Search',
+  'empty_state': 'No data found',
+  'event': 'Event: ',
 };

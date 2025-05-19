@@ -21,4 +21,5 @@ class AppColors {
   static const Color searchBarBackground = Color(0xFFEFEFEF);
   static const Color eventLabel = Color(0xFFA8A7A8);
   static const Color divider = Color(0xFFC0C0C0);
+  static const Color lightBorder = Color(0xFFfffff8);
 }

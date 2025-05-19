@@ -33,6 +33,11 @@ class LocalizationsClass {
   }
 
   Map<String, dynamic> messages() {
-    return {'not_found': translations['not_found']};
+    return {
+      'not_found': translations['not_found'],
+      'cancel': translations['cancel'],
+      "search": translations['search'],
+      'empty_state': translations['empty_state'],
+    };
   }
 }
