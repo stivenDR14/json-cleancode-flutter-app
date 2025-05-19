@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../features/tabs-layout/domain/entities/slot_category.dart';
 import '../../features/tabs-layout/presentation/pages/tabs_layout.dart';
 
 class AppRouter {
@@ -10,7 +9,7 @@ class AppRouter {
     final pathSegments = uri.pathSegments;
 
     if (pathSegments.isEmpty || pathSegments.first == 'home') {
-      SlotCategory category = SlotCategory.instructor;
+      /* SlotCategory category = SlotCategory.instructor;
       if (pathSegments.length > 1) {
         switch (pathSegments[1]) {
           case 'instructor':
@@ -26,12 +25,10 @@ class AppRouter {
             category = SlotCategory.administration;
             break;
         }
-      }
+      } */
       return PageRouteBuilder(
         settings: settings,
-        pageBuilder:
-            (context, animation, secondaryAnimation) =>
-                TabsLayout(initialCategory: category),
+        pageBuilder: (context, animation, secondaryAnimation) => TabsLayout(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(

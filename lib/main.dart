@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'config/di/locator.dart';
+import 'config/provider/provider_setup.dart';
 import 'config/router/app_router.dart';
 import 'core/constants/localization/localization_class.dart';
 import 'core/constants/theme/app_theme.dart';
@@ -20,10 +22,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: localizationClass.general()['appTitle'],
-      theme: AppTheme.lightTheme,
-      onGenerateRoute: AppRouter.onGenerateRoute,
+    return MultiBlocProvider(
+      providers: ProviderSetup.getProviders(),
+      child: MaterialApp(
+        title: localizationClass.general()['appTitle'],
+        theme: AppTheme.lightTheme,
+        onGenerateRoute: AppRouter.onGenerateRoute,
+      ),
     );
   }
 }

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/di/locator.dart';
-import '../../../../config/router/app_router.dart';
 import '../../../../core/constants/localization/localization_class.dart';
+import '../../../../core/constants/theme/app_colors.dart';
 import '../../../content/presentation/pages/content.dart';
 import '../../domain/entities/slot_category.dart';
+import '../cubit/tabs_layout_cubit.dart';
+import '../cubit/tabs_layout_state.dart';
 
 class TabsLayout extends StatefulWidget {
-  final SlotCategory initialCategory;
-
-  const TabsLayout({super.key, this.initialCategory = SlotCategory.instructor});
+  const TabsLayout({super.key});
 
   @override
   State<TabsLayout> createState() => _TabsLayoutState();
@@ -16,19 +17,28 @@ class TabsLayout extends StatefulWidget {
 
 class _TabsLayoutState extends State<TabsLayout> with TickerProviderStateMixin {
   late TabController _tabController;
-  late SlotCategory _currentCategory;
   final localizationClass = locator<LocalizationsClass>();
+  late TabsLayoutCubit _tabsLayoutCubit;
 
   @override
   void initState() {
     super.initState();
-    _currentCategory = widget.initialCategory;
-    _tabController = TabController(
-      length: SlotCategory.values.length,
-      vsync: this,
-      initialIndex: _currentCategory.index,
-    );
-    _tabController.addListener(_handleTabChange);
+    _tabsLayoutCubit = BlocProvider.of<TabsLayoutCubit>(context);
+
+    _tabsLayoutCubit.getSlots((slotData) {
+      _tabController = TabController(
+        length: SlotCategory.values.length,
+        animationDuration: const Duration(milliseconds: 600),
+        vsync: this,
+        initialIndex: SlotCategory.values.indexOf(
+          SlotCategory.values.firstWhere(
+            (e) => e.name == slotData.slotGroups.first.slotGroupName,
+          ),
+        ),
+      );
+
+      _tabController.addListener(_handleTabChange);
+    });
   }
 
   @override
@@ -39,41 +49,60 @@ class _TabsLayoutState extends State<TabsLayout> with TickerProviderStateMixin {
   }
 
   void _handleTabChange() {
-    if (_tabController.indexIsChanging ||
-        _tabController.index != _currentCategory.index) {
-      setState(() {
-        _currentCategory = SlotCategory.values[_tabController.index];
-      });
+    if (_tabController.indexIsChanging) {
+      _tabsLayoutCubit.handleTabChange(
+        SlotCategory.values[_tabController.index].name,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('----'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => null,
-        ),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.black,
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.grey,
-          tabs: [
-            Tab(text: localizationClass.tabs()['instructor']),
-            Tab(text: localizationClass.tabs()['trainee']),
-            Tab(text: localizationClass.tabs()['observer']),
-            Tab(text: localizationClass.tabs()['administration']),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: SlotCategory.values.map((category) => Content()).toList(),
-      ),
+    return BlocConsumer<TabsLayoutCubit, TabsLayoutState>(
+      listener: (context, state) {
+        switch (state.runtimeType) {
+          case TabsLayoutLoading:
+            break;
+          default:
+            break;
+        }
+      },
+      builder: (context, state) {
+        if (state is TabsLayoutLoaded) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(state.slots.categoryName),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new),
+                onPressed: () => _tabsLayoutCubit.handleBack(_tabController),
+              ),
+              bottom: TabBar(
+                controller: _tabController,
+                dividerColor: AppColors.divider,
+                indicatorColor: AppColors.tabIndicator,
+                labelColor: AppColors.tabSelected,
+                unselectedLabelColor: AppColors.tabUnselected,
+                tabs:
+                    SlotCategory.values
+                        .map(
+                          (group) =>
+                              Tab(text: localizationClass.tabs()[group.name]),
+                        )
+                        .toList(),
+              ),
+            ),
+            body: TabBarView(
+              controller: _tabController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: SlotCategory.values.map((group) => Content()).toList(),
+            ),
+          );
+        }
+        if (state is TabsLayoutError) {
+          return Scaffold(body: Center(child: Text(state.message)));
+        }
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      },
     );
   }
 }
